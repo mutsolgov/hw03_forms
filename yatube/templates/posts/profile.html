@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}
+{% if author.get_full_name %}
+        {{ author.get_full_name }}
+    {% else %}
+        {{ author }}
+    {% endif %} Профайл пользователя <!--Лев Толстой-->{% endblock %}
+{% block content %}
+    <main>
+      <div class="container py-5">        
+        <h1>Все посты пользователя {% if author.get_full_name %}{{ author.get_full_name }}{% else %}{{ author }}{% endif %}<!--Лев Толстой--> </h1>
+        <h3>Всего постов: {{ page_obj.paginator.count }} <!-- --> </h3>   
+        <article>
+          {% for post in page_obj %}
+          <ul>
+            {% comment %} <li>
+              Автор: <!--Лев Толстой-->
+              <a href="<!-- -->">все посты пользователя</a>
+            </li> {% endcomment %}
+            <li>
+              Дата публикации: {{ post.pub_date|date:'d E Y' }} <!-- 31 июля 1854 --> 
+            </li>
+          </ul>
+          <p>
+            {{ post.text }}
+          <!--
+            [Фокшаны.] Еще переходъ до Фокшанъ, во время котораго я ѣхалъ съ 
+            Монго. Человѣкъ пустой, но съ твердыми, хотя и ложными убѣжденіями.
+            Генерал[у] по этому должно быть случаю, угодно было спрашивать о мое
+            мъ здоровьи.
+            Свинья! К[о]вырялъ носъ и ничего не написалъ — вотъ 2 упрека за 
+            нын[ѣшній]     день. Послѣдній упрекъ становится слишкомъ частъ, 
+            хотя походъ и можетъ служить въ немъ отчасти извиненіемъ. 
+            Отношенія мои съ товарищами становятся такъ пріятны, что мнѣ 
+            жалко бросить штабъ. Здоровье кажется (2) лучше. 
+          --> 
+          </p>
+          <a href="{% url 'posts:post_detail' post.id %}">подробная информация </a>
+        </article>   
+        {% if post.group %}    
+        <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a> 
+        {% endif %}      
+        <hr>
+        {% if not forloop.last %}<hr>{% endif %}
+        {% endfor %}
+        <div class="d-flex justify-content-center">
+        <div>{% include 'posts/includes/paginator.html' %}</div>
+        </div>
+        <!-- Остальные посты. после последнего нет черты -->
+        <!-- Здесь подключён паджинатор -->  
+      </div>
+    </main>
+    {% endblock %} 
