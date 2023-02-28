@@ -1,20 +1,17 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator
 from django.shortcuts import render, get_object_or_404, redirect
 from posts.forms import PostForm
+from .utils import paginations
 
 from .models import Post, Group, User
 
 User = get_user_model()
-NUMBER_OF_POSTS_PER_PAGE = 10
 
 
 def index(request):
     post_list = Post.objects.select_related('group')
-    paginator = Paginator(post_list, NUMBER_OF_POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginations(request, post_list)
     context = {
         'page_obj': page_obj,
     }
@@ -24,9 +21,7 @@ def index(request):
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
     posts = group.posts.select_related('group')
-    paginator = Paginator(posts, NUMBER_OF_POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginations(request, posts)
     context = {
         'page_obj': page_obj,
         'group': group,
@@ -36,10 +31,8 @@ def group_posts(request, slug):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    post_list = Post.objects.filter(author=author)
-    paginator = Paginator(post_list, NUMBER_OF_POSTS_PER_PAGE)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    post_list = author.posts.select_related('author')
+    page_obj = paginations(request, post_list)
     context = {
         'page_obj': page_obj,
         'author': author,

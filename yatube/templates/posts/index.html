@@ -9,7 +9,6 @@
 {% for post in page_obj %} 
   <ul>
     <li>
-      {% comment %} Автор: {{ post.author.get_full_name }} {% endcomment %}
       Автор: {% if post.author.get_full_name %}{{ post.author.get_full_name }}{% else %}{{ post.author }}{% endif %} <a href="{% url 'posts:profile' post.author %}">все посты пользователя</a>
     </li>
     <li>
